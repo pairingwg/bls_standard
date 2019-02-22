@@ -1,4 +1,4 @@
-BLS Standard Draft
+# BLS Standard Draft
 
 The repo is maintained by a working group aiming to standardize BLS signature scheme. 
 Major milestone updates will be uploaded to IETF webpage. 
