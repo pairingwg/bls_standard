@@ -1,8 +1,6 @@
-# BLS_standard_wg
-
 BLS Standard Draft
 
-This is a working group for BLS standard draft. 
+The repo is maintained by a working group aiming to standardize BLS signature scheme. 
 Major milestone updates will be uploaded to IETF webpage. 
 https://tools.ietf.org/html/draft-boneh-bls-signature-00
 
