@@ -54,15 +54,30 @@ organization="Algorand"
 
 .# Abstract
 
+
+BLS is a digital signature scheme with compression properties.
+With a given set of signatures (sig_1, ..., sig_n) anyone can produce
+a compressed signature sig_compressed. The same is true for a set of
+private keys or public keys, while keeping the connection between sets
+(a compressed public key is associated to its compressed public key).
+Furthermore, the BLS signature scheme is deterministic, non-malleable,
+and efficient. Its simplicity and cryptographic properties allows it
+to be useful in a variety of use-cases, specifically when minimal
+storage space or bandwidth are required.
+
+<!---
+__old version__
 The BLS signature scheme was introduced by Boneh–Lynn–Shacham
 in 2001. The signature scheme relies on pairing-friendly curves and
 supports non-interactive aggregation properties.
-That is, given a collection of signatures (sigma_1, ..., sigma_n), anyone
-can produce a short signature (sigma) that authenticates the entire
+That is, given a collection of signatures (signature_1, ..., signature_n), anyone
+can produce a short signature (signature) that authenticates the entire
 collection. BLS signature scheme is simple, efficient and can be used
 in a variety of network protocols and systems to compress signatures
 or certificate chains. This document specifies the BLS
 signature and the aggregation algorithms.
+--->
+
 
 
 {mainmatter}
@@ -71,7 +86,8 @@ signature and the aggregation algorithms.
 # Introduction
 
 A signature scheme is a fundamental cryptographic primitive
-used on the Internet that is used to protect integrity of communication.
+used on the Internet and beyond that is used to protect authenticity and
+ integrity of communication.
 Only holder of the secret key can sign messages, but anyone can
 verify the signature using the associated public key.
 
@@ -85,25 +101,41 @@ of important efficiency properties:
 
 1. The public key and the signatures are encoded as single group elements.
 1. Verification requires 2 pairing operations.
-1. A collection of signatures (sigma_1, ..., sigma_n) can be compressed
-into a single signature (sigma). Moreover, the compressed signature can
+1. A collection of signatures (signature_1, ..., signature_n) can be compressed
+into a single signature (signature). Moreover, the compressed signature can
 be verified using only n+1 pairings (as opposed to 2n pairings, when verifying
 naively n signatures).
 
-Given the above properties, we believe the scheme will find very interesting
-applications. The immediate applications include compressing signature chains
-in Public Key Infrastructure (PKI) and in the Secure Border Gateway Protocol (SBGP).
-Concretely, in a PKI signature chain of depth n, we have n signatures by n
+Given the above properties,
+<!---
+we believe the scheme will find very interesting
+applications.
+--->
+the scheme enables many interesting applications.
+The immediate applications include
+* authentication and integrity for Public Key Infrastructure (PKI) and blockchains.
+
+  * The usage is similar to classical digital signatures, such as ECDSA.
+
+*  compressing signature chains for PKI and  Secure Border Gateway Protocol (SBGP).
+
+   * Concretely, in a PKI signature chain of depth n, we have n signatures by n
 certificate authorities on n distinct certificates. Similarly, in SBGP,
 each router receives a list of n signatures attesting to a path of length n
 in the network. In both settings, using the BLS signature scheme would allow us
 to compress the n signatures into a single signature.
 
-In addition, the BLS signature scheme is already integrated into major blockchain
-projects such as Ethereum, Algorand, Chia and Dfinity. There, BLS signatures
+* consensus protocols for blockchains.
+
+  * There, BLS signatures
 are used for authenticating transactions as well as votes during the consensus
 protocol, and the use of aggregation significantly reduces the bandwidth
 and storage requirements.
+
+<!---
+In addition, the BLS signature scheme is also integrated into major blockchain
+projects such as Algorand, Chia, Dfinity, Ethereum.
+--->
 
 ## Terminology
 
@@ -113,46 +145,70 @@ The following terminology is used through this document:
 
 * PK:  The public key for the signature scheme.
 
-* msg:  The input to be signed by the signature scheme.
+* message:  The input to be signed by the signature scheme.
 
-* sigma :  The digital signature output.
+* signature:  The digital signature output.
 
+* compression:  Given a list of signatures for a list of messages and public keys,
+generate a new signature that authenticates the same list of messages and public keys.
+
+<!---
 * Signer:  The Signer generates a pair (SK, PK), publishes
    PK for everyone to see, but keeps the private key SK.
 
-* Verifier:  The Verifier holds a public key PK. It receives (msg, sigma)
+* Verifier:  The Verifier holds a public key PK. It receives (message, signature)
    that it wishes to verify.
 
-* Aggregator: The Aggregator receives a collection of signatures (sigma_1, ..., sigma_n) that it wishes to compress into a short signature.
+* Aggregator: The Aggregator receives a collection of signatures (signature_1, ..., signature_n) that it wishes to compress into a short signature.
+--->
 
 ## Signature Scheme Algorithms and Properties
 
-  A signature scheme comes with a key generation algorithm that generates a public
-   key PK and a private key SK.
+Like most signature schemes,
+BLS comes with the following API:
 
-   The Signer, given an input msg, uses the private key SK to
-   obtain and output a signature sigma.
+* a key generation algorithm that generates a public
+  key PK and a private key SK
 
-      sigma = Sign(SK, msg)
+      KeyGen() -> PK, SK
 
-   The signing algorithm may be deterministic or randomized, depending
+* a sign algorithm that generates a deterministic signature for a message and a
+secret key
+
+      Sign(SK, message) -> signature
+<!---
+   The Signer, given an input message, uses the private key SK to
+   obtain and output a signature.
+
+      signature = Sign(SK, message)
+
+   The BLS signing algorithm is deterministic.
+
+<!---
+   may be deterministic or randomized, depending
    on the scheme. Looking ahead, BLS instantiates a deterministic signing algorithm.
+--->
 
-   The signature sigma allows a Verifier holding the public key PK to verify
-   that sigma is indeed produced by the signer holding the associated secret key.   Thus, the digital scheme also comes with an algorithm
+* a verification algorithm that outputs VALID if signature is a valid signature of message, and INVALID otherwise.
 
-      Verify(PK, msg, sigma)
+<!---
+   The signature allows a verifier holding the public key PK to verify
+   that signature is indeed produced by the signer holding the associated secret key.   Thus, the digital scheme also comes with an algorithm
+--->
 
-   that outputs VALID if sigma is a valid signature of msg, and INVALID otherwise.
+      Verify(PK, message, signature) -> VALID or INVALID
 
-   We require that PK, sigma and msg are octet strings.
+<!----
+   that outputs VALID if signature is a valid signature of message, and INVALID otherwise.
+--->
+   We require that SK, PK, signature and message are octet strings.
 
 ### Aggregation
 
   An aggregatable signature scheme includes an algorithm that allows to compress a
   collection of signatures into a short signature.
 
-      sigma = Aggregate((PK_1, sigma_1), ..., (PK_n, sigma_n))
+      Aggregate((PK_1, signature_1), ..., (PK_n, signature_n)) -> signature
 
   Note that the aggregator does not need to know the messages corresponding to individual
   signatures.
@@ -160,35 +216,34 @@ The following terminology is used through this document:
   The scheme also includes an algorithm to verify an aggregated signature, given a collection
   of corresponding public keys, the aggregated signature, and one or more messages.
 
-      Verify-Aggregated((PK_1, msg_1), ..., (PK_n, msg_n), sigma)
+      Verify-Aggregated((PK_1, message_1), ..., (PK_n, message_n), signature) -> VALID or INVALID
 
-  that outputs VALID if sigma is a valid aggregated signature of messages msg_1, ..., msg_n, and
+  that outputs VALID if signature is a valid aggregated signature of messages message_1, ..., message_n, and
   INVALID otherwise.
 
   The verification algorithm may also accept a simpler interface that allows
-  to verify an aggregate signature of the same message. That is, msg_1 = msg_2 = ... = msg_n.
+  to verify an aggregate signature of the same message. That is, message_1 = message_2 = ... = message_n.
 
-        Verify-Aggregated(PK_1, ..., PK_n, msg, sigma)
+        Verify-Aggregated(PK_1, ..., PK_n, message, signature) -> VALID or INVALID
 
 ### Security
-
 #### Message Unforgeability
 
 Consider the following game between an adversary and a challenger.
 The challenger generates a key-pair (PK, SK) and gives PK to the adversary.
-The adversary may repeatedly query the challenger on any message msg to obtain
-its corresponding signature sigma. Eventually the adversary outputs a pair
-(msg', sigma').
+The adversary may repeatedly query the challenger on any message message to obtain
+its corresponding signature signature. Eventually the adversary outputs a pair
+(message', signature').
 
-Unforgeability means no adversary can produce a pair (msg', sigma') for a message msg' which he never queried the challenger and Verify(PK, msg, sigma) outputs VALID.
+Unforgeability means no adversary can produce a pair (message', signature') for a message message' which he never queried the challenger and Verify(PK, message, signature) outputs VALID.
 
 
 #### Strong Message Unforgeability
 
 In the strong unforgeability game, the game proceeds as above, except
-no adversary should be able to produce a pair (msg', sigma') that verifies (i.e. Verify(PK, msg, sigma)
-outputs VALID) given that he never queried the challenger on msg', or if he did query and obtained
-a reply sigma, then sigma != sigma'.
+no adversary should be able to produce a pair (message', signature') that verifies (i.e. Verify(PK, message, signature)
+outputs VALID) given that he never queried the challenger on message', or if he did query and obtained
+a reply signature, then signature != signature'.
 
 More informally, the strong unforgeability means that no adversary can produce
 a different signature (not provided by the challenger) on a message which he queried before.
@@ -197,13 +252,13 @@ a different signature (not provided by the challenger) on a message which he que
 
 Consider the following game between an adversary and a challenger.
 The challenger generates a key-pair (PK, SK) and gives PK to the adversary.
-The adversary may repeatedly query the challenger on any message msg to obtain
-its corresponding signature sigma.
-Eventually the adversary outputs a sequence ((PK_1, msg_1), ..., (PK_n, msg_n), (PK, msg), sigma).
+The adversary may repeatedly query the challenger on any message message to obtain
+its corresponding signature signature.
+Eventually the adversary outputs a sequence ((PK_1, message_1), ..., (PK_n, message_n), (PK, message), signature).
 
 Aggregation unforgeability means that no adversary can produce a sequence
-where it did not query the challenger on the message msg, and
-Verify-Aggregated((PK_1, msg_1), ..., (PK_n, msg_n), (PK, msg), sigma) outputs VALID.
+where it did not query the challenger on the message message, and
+Verify-Aggregated((PK_1, message_1), ..., (PK_n, message_n), (PK, message), signature) outputs VALID.
 
 We note that aggregation unforgeability implies message unforgeability.
 
@@ -214,20 +269,24 @@ TODO: We may also consider a strong aggregation unforgeability property.
 BLS signatures require pairing-friendly curves
 given by e : G1 x G2 -> GT, where G1, G2 are prime-order
 subgroups of elliptic curve groups E1, E2.
-Such curves are described in [I-D.pairing-friendly-curves],
-one of which is BLS12-381.
+This draft suggests to use curve BLS12-381 as
+described in [I-D.pairing-friendly-curves].
+Support of other curves SHALL be defined in
+extensions or future versions of this draft, or in
+ separate
+documents.
 
 There are two variants of the scheme:
 
-1. (minimizing signature size) Put signatures in G1 and public keys
-in G2, where G1/E1 has the more compact representation.
+1. (minimizing signature size) Use G1 to host data types of signatures
+and G2 for public keys, where G1/E1 has the more compact representation.
 For instance, when instantiated with the pairing-friendly curve
 BLS12-381, this yields signature size of 48 bytes, whereas
 the ECDSA signature over curve25519 has a signature size of
 64 byes.
 
-2. (minimizing public key size) Put public keys in G1 and signatures
-in G2. This latter case comes up when we do signature aggregation,
+2. (minimizing public key size) Use G1 to host data types of public keys and
+G2 for signatures. This latter case comes up when we do signature aggregation,
 where most of the communication costs come from public keys. This
 is particularly relevant in applications such as blockchains
 and compressing certificate chains, where the goal is to minimize
@@ -276,7 +335,7 @@ Notation and primitives used:
 
 - GT - order r subgroup of the multiplicative group over a field
 
-- We require an efficient pairing e : (G1, G2) -> GT that is
+- We require an efficient pairing: (G1, G2) -> GT that is
   bilinear and non-degenerate.
 
 - Elliptic curve operations in E1 and E2 are written in additive notation, with P+Q
@@ -290,7 +349,7 @@ Notation and primitives used:
 
 - || - octet string concatenation
 
-- suite_string - an identifier for the ciphersuite. May include
+- domain_separator - an identifier for the ciphersuite. In current draft "BLS12_381-SHA384-try_and_increment". Future identifiers MUST include
   an identifier of the curve, for example BLS12-381, an identifier of the hash function, for example SHA512, and the algorithm in use, for example, try-and-increment.
 
 Type conversions:
@@ -327,64 +386,65 @@ Hashing Algorithms
 
 ##  Sign: Signature Generation
 
-      Input: SK = x, msg       Output: sigma
+      Input: SK = x, message       Output: signature
 
-1. Input a secret key SK = x and a message digest msg
-1. H = hash_to_G1(suite_string, msg)
+1. Input a secret key SK = x and a message digest message
+1. H = hash_to_G1(suite_string, message)
 1. Gamma = x*H
-1. sigma = E1_to_string(Gamma)
-1. Output sigma
+1. signature = E1_to_string(Gamma)
+1. Output signature
 
 
 ##  Verify: Signature Verification
 
-      Input: PK, msg, sigma    Output: "VALID" or "INVALID"
+      Input: PK, message, signature    Output: "VALID" or "INVALID"
 
-1.  H = hash_to_G1(suite_string, msg)
-1.  Gamma = string_to_E1(sigma)
+1.  H = hash_to_G1(suite_string, message)
+1.  Gamma = string_to_E1(signature)
 1.  If Gamma is "INVALID", output "INVALID" and stop
 1.  If r*Gamma != 0, output "INVALID" and stop
-1.  Compute c = e(Gamma, P2)
-1.  Compute c' = e(H, PK)
+1.  Compute c = pairing(Gamma, P2)
+1.  Compute c' = pairing(H, PK)
 1.  If c and c' are equal, output "VALID",
        else output "INVALID"
 
 ## Aggregate
 
-      Input: (PK_1, sigma_1), ..., (PK_n, sigma_n)    Output: sigma
+      Input: (PK_1, signature_1), ..., (PK_n, signature_n)    Output: signature
 
-1. Output sigma = sigma_1 + sigma_2 + ... + sigma_n
+1. Output signature = E1_to_string(string_to_E1(signature_1) + ... +
+string_to_E1(signature_n))
 
 ### Verify-Aggregated-1
 
-      Input: (PK_1, ..., PK_n), msg, sigma    Output: "VALID" or "INVALID"
+      Input: (PK_1, ..., PK_n), message, signature    Output: "VALID" or "INVALID"
 
 1.  PK' = PK_1 + ... + PK_n
-1.  Output Verify(PK', msg, sigma)
+1.  Output Verify(PK', message, signature)
 
 ### Verify-Aggregated-n
 
-      Input: (PK_1, msg_1), ..., (PK_n, msg_n), sigma    
+      Input: (PK_1, message_1), ..., (PK_n, message_n), signature    
       Output: "VALID" or "INVALID"
 
-1.  H_i = hash_to_G1(suite_string, msg_i)
-1.  Gamma = string_to_E1(sigma)
+1.  H_i = hash_to_G1(suite_string, message_i)
+1.  Gamma = string_to_E1(signature)
 1.  If Gamma is "INVALID", output "INVALID" and stop
 1.  If r*Gamma != 0, output "INVALID" and stop
-1.  Compute c = e(Gamma, P2)
-1.  Compute c' = e(H_1, PK_1) * ... * e(H_n, PK_n)
+1.  Compute c = pairing(Gamma, P2)
+1.  Compute c' = pairing(H_1, PK_1) * ... * pairing(H_n, PK_n)
 1.  If c and c' are equal, output "VALID",
        else output "INVALID"
 
 <!---
 modified bls verification
 
-1. Input a collection of public keys `X_1, ..., X_n`, message `msg` and signature `sigma`
+1. Input a collection of public keys `X_1, ..., X_n`, message `message` and signature `signature`
 1. For all `i in n`, check if `X_i` in `G2`
     * Output `Fail` if not
 1. Compute `(T_1, ..., T_n) = hash_to_Zr(X_1, ..., X_n)`
 1. Compute `X = X1^T1 * X2^T2 * ... * Xn^Tn`
-1. Output whatever `Verify(X, msg, sigma)` outputs
+1. Output whatever `Verify(X, message, signature)` outputs
 --->
 
 ### Implementation optimizations
@@ -425,8 +485,8 @@ s_1, ..., s_k each of length log(p)+2 bits, where
 * the first two bits of s_2, ..., s_k are 00
 * the x-coordinate is specified by the last log(p) bits of s_1, ..., s_k
 
-In fact, we will pad each substring with 0s so that the length of each substring
-is a multiple of 8.
+In fact, we will pad each substring with 0 bits so that the length of each substring
+is a multiple of 8 bits.
 
 This section uses the following constants:
 
@@ -630,11 +690,11 @@ compute {ab}*P1. [BLS01, BGLS03]
 When users register a public key, we should ensure that it is well-formed.
 This requires a G2 membership test. In applications where we use aggregation,
 we would further require that users prove knowledge of the corresponding secret key
-during registration to prevent rogue key attacks.
+during registration to prevent rogue key attacks [Boneh-Drijvers-Neven 18a](https://crypto.stanford.edu/~dabo/pubs/papers/BLSmultisig.html).
 
 TBA: additional discussion on this, e.g. [Ristenpart-Yilek 06], and alternative
 mechanisms for securing aggregation against rogue key attacks, e.g.
-[Boneh-Drijvers-Neven 18]; there, pre-processing public keys would speed up
+[Boneh-Drijvers-Neven 18b](https://eprint.iacr.org/2018/483.pdf); there, pre-processing public keys would speed up
 verification.
 
 ## Skipping membership check
@@ -643,7 +703,7 @@ In this setting, the BLS signature remains unforgeable (but not strongly
 unforgeable) under a stronger assumption:
 
 given P1, a*P1, P2, b*P2, it is hard to compute U in E1 such that
-e(U,P2) = e(a*P1, b*P2).
+pairing(U,P2) = pairing(a*P1, b*P2).
 
 ## Side channel attacks
 It is important to protect the secret key in implementations of the
@@ -706,6 +766,7 @@ and F to the Final exponentiation).
 
 # Implementation Status
 
+This section will be removed in the final version of the draft.
 There are currently several implementations of BLS signatures using the BLS12-381 curve.
 
 * Algorand: TBA
@@ -736,9 +797,11 @@ Chia uses the Fouque-Tibouchi hashing to the curve, which can be done in constan
 * EdDSA [rfc8032](https://tools.ietf.org/html/rfc8032)
 
 
+<!---
 # IANA Considerations
 
 This document does not make any requests of IANA.
+--->
 
 # Appendix A. Test Vectors
 
@@ -784,11 +847,11 @@ that encodes a point whose projective form is
 * z: Fq2 { c0: Fq(0x00fcb7858e1f18ad9b1a8032d369f9a8a022d5794d49c73f908ac3e40f5ab60b100ec022214636b0eb6fcec185c9341e), c1: Fq(0x139ae75a9781efdf8babcd047d2166d9a3044256d811b4e4449ad791fe795b95ee4d01f032aa45ccd33342c6eef41785) } }
 
 
-To sign a message msg = "this is the message", the signing algorithm does the following:
+To sign a message message = "this is the message", the signing algorithm does the following:
 
 * instantiate the Hash_to_G1 algorithm with SHA512 using try-and-increment method
-* obtain hm = Hash_to_G1(msg)
-* compute x*hm as sigma = "b2 b8 e3 8d ec 47 f9 4a bb a7 c1 95 64 bd ad 96 0a 9f 42 43 8c f4 98 06 11 da 82 bb 78 d6 de 53 cc f2 3a 29 a8 e2 87 b0 9f ce 91 7a 28 17 8a f3"
+* obtain hm = Hash_to_G1(message)
+* compute x*hm as signature = "b2 b8 e3 8d ec 47 f9 4a bb a7 c1 95 64 bd ad 96 0a 9f 42 43 8c f4 98 06 11 da 82 bb 78 d6 de 53 cc f2 3a 29 a8 e2 87 b0 9f ce 91 7a 28 17 8a f3"
 which encodes a point whose projective form is
   * x: Fq(0x0f7e27fe139e0d2ad38b25e0d34cc1445fcfb9375d5a7078a87458a6a98224584199ec0197392ff08e0be368b452ad65),
   * y: Fq(0x02424a69e9b6d9818fa99099f7f4fb56123587477bb1b992f478940b82cef401ff4bf96b77dec63826bf6c08addb08db),
@@ -798,8 +861,8 @@ To verify the signature with the public key and the message, the verification al
 following:
 
 * instantiate the hash_to_G1 algorithm with SHA512 using try-and-increment method
-* obtain hm = hash_to_G1(msg)
-* return e(hm, pk) ?= e(sigma, P2)
+* obtain hm = hash_to_G1(message)
+* return pairing(hm, pk) ?= pairing(signature, P2)
 
 The verification algorithm should return true for the testing vectors in this section.
 --->
@@ -810,6 +873,8 @@ Short Signatures from the Weil Pairing. ASIACRYPT 2001: 514-532.
 
 [BGLS 03] Dan Boneh, Craig Gentry, Ben Lynn, Hovav Shacham:
 Aggregate and Verifiably Encrypted Signatures from Bilinear Maps. EUROCRYPT 2003: 416-432.
+
+
 
 [I-D.irtf-cfrg-hash-to-curve]
     S. Scott, N. Sullivan, and C. Wood:
