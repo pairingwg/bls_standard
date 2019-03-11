@@ -264,6 +264,18 @@ We note that aggregation unforgeability implies message unforgeability.
 
 TODO: We may also consider a strong aggregation unforgeability property.
 
+
+## Dependencies
+
+This draft has the following dependencies:
+
+
+* it relies on the [I-D.irtf-cfrg-hash-to-curve]
+for methods to convert binary strings
+into group elements
+* it relies on [I-D.pairing-friendly-curves] for pairings
+and related operations.
+
 # BLS Signature
 
 BLS signatures require pairing-friendly curves
@@ -626,6 +638,10 @@ The algorithm takes as follows:
 
 
 ### Hash to groups
+
+Note: this section will be removed in later versions. We will refer to  
+[I-D.irtf-cfrg-hash-to-curve] once it is updated with methods for hash into
+pairing friendly curves. The rest of the material are for information only.
 
 The following hash_to_G1_try_and_increment algorithm implements
 hash_to_G1 in a simple and generic way that works for any
