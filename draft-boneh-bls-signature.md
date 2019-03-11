@@ -701,7 +701,13 @@ indistinguishable from the uniform distribution over the group.
 ### Membership test
 
 The following g1_membership_test and g1_membership_test algorithms is to
-check if a E1 or E2 point is in the correct prime subgroup.
+check if a E1 or E2 point is in the correct prime subgroup. Example:
+ 
+  r = 0x73eda753299d7d483339d80809a1d80553bda402fffe5bfeffffffff00000001 
+ 
+for curve BLS12-381. 
+
+
 
   g1_membership_test(input_point)
 
@@ -715,8 +721,8 @@ check if a E1 or E2 point is in the correct prime subgroup.
 
   Steps:
 
-  1.  c = 0x396C8C005555E1568C00AAAB0000AAAB
-  1.  if c * P  == 1 return "VALID", otherwise, return "INVALID"
+  1.  r = order of group G1
+  1.  if r * P  == 1 return "VALID", otherwise, return "INVALID"
 
 
 
@@ -728,13 +734,12 @@ check if a E1 or E2 point is in the correct prime subgroup.
 
   Output:
 
-     "VALID" if P is in G1; "INVALID" otherwise
+     "VALID" if P is in G2; "INVALID" otherwise
 
   Steps:
 
-  1.  c = 0x5d543a95414e7f1091d50792876a202cd91de4547085abaa68a205b2e5a7ddfa
-      628f1cb4d9e82ef21537e293a6691ae1616ec6e786f0c70cf1c38e31c7238e5
-  1.  if c * P  == 1 return "VALID", otherwise, return "INVALID"
+  1.  r = order of group G2
+  1.  if r * P  == 1 return "VALID", otherwise, return "INVALID"
 
 ## Security analysis
 
