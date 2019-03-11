@@ -409,6 +409,9 @@ Hashing Algorithms
        else output "INVALID"
 
 ## Aggregate
+The following algorithm works for both the same message aggregation and different
+message aggregation.
+
 
       Input: (PK_1, signature_1), ..., (PK_n, signature_n)    Output: signature
 
