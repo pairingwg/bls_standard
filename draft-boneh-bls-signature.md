@@ -278,7 +278,7 @@ documents.
 
 There are two variants of the scheme:
 
-1. (minimizing signature size) Use G1 to host data types of signatures
+1. (minimizing signature size) Use G1 to host data types of signatures
 and G2 for public keys, where G1/E1 has the more compact representation.
 For instance, when instantiated with the pairing-friendly curve
 BLS12-381, this yields signature size of 48 bytes, whereas
@@ -641,8 +641,10 @@ that hashes arbitrary strings into strings of 384 bits.
    hash_to_G1_try_and_increment(suite_string, alpha_string)
 
    input:
+
       suite_string - an identifier to indicate the curves and a hash function
         that outputs k*padded_pbits bits
+
       alpha_string - the input string to be hashed
 
    Output:
@@ -676,6 +678,44 @@ that hashes arbitrary strings into strings of 384 bits.
 Note that this hash to group function will never hash into the point at infinity.
 This does not affect the security since the output distribution is statistically
 indistinguishable from the uniform distribution over the group.
+
+### Membership test
+
+The following g1_membership_test and g1_membership_test algorithms is to
+check if a E1 or E2 point is in the correct prime subgroup.
+
+  g1_membership_test(input_point)
+
+  input:
+
+     input_point - a point P = (x, y) on the curve E1
+
+  Output:
+
+     "VALID" if P is in G1; "INVALID" otherwise
+
+  Steps:
+
+  1.  c = 0x396C8C005555E1568C00AAAB0000AAAB
+  1.  if c * P  == 1 return "VALID", otherwise, return "INVALID"
+
+
+
+  g2_membership_test(input_point)
+
+  input:
+
+     input_point - a point P = (x, y) on the curve E2
+
+  Output:
+
+     "VALID" if P is in G1; "INVALID" otherwise
+
+  Steps:
+
+  1.  c = 0x5d543a95414e7f1091d50792876a202cd91de4547085abaa68a205b2e5a7ddfa
+      628f1cb4d9e82ef21537e293a6691ae1616ec6e786f0c70cf1c38e31c7238e5
+  1.  if c * P  == 1 return "VALID", otherwise, return "INVALID"
 
 ## Security analysis
 
