@@ -226,43 +226,7 @@ secret key
 
         Verify-Aggregated(PK_1, ..., PK_n, message, signature) -> VALID or INVALID
 
-### Security
-#### Message Unforgeability
 
-Consider the following game between an adversary and a challenger.
-The challenger generates a key-pair (PK, SK) and gives PK to the adversary.
-The adversary may repeatedly query the challenger on any message message to obtain
-its corresponding signature signature. Eventually the adversary outputs a pair
-(message', signature').
-
-Unforgeability means no adversary can produce a pair (message', signature') for a message message' which he never queried the challenger and Verify(PK, message, signature) outputs VALID.
-
-
-#### Strong Message Unforgeability
-
-In the strong unforgeability game, the game proceeds as above, except
-no adversary should be able to produce a pair (message', signature') that verifies (i.e. Verify(PK, message, signature)
-outputs VALID) given that he never queried the challenger on message', or if he did query and obtained
-a reply signature, then signature != signature'.
-
-More informally, the strong unforgeability means that no adversary can produce
-a different signature (not provided by the challenger) on a message which he queried before.
-
-#### Aggregation Unforgeability
-
-Consider the following game between an adversary and a challenger.
-The challenger generates a key-pair (PK, SK) and gives PK to the adversary.
-The adversary may repeatedly query the challenger on any message message to obtain
-its corresponding signature signature.
-Eventually the adversary outputs a sequence ((PK_1, message_1), ..., (PK_n, message_n), (PK, message), signature).
-
-Aggregation unforgeability means that no adversary can produce a sequence
-where it did not query the challenger on the message message, and
-Verify-Aggregated((PK_1, message_1), ..., (PK_n, message_n), (PK, message), signature) outputs VALID.
-
-We note that aggregation unforgeability implies message unforgeability.
-
-TODO: We may also consider a strong aggregation unforgeability property.
 
 
 ## Dependencies
@@ -462,12 +426,7 @@ modified bls verification
 1. Output whatever `Verify(X, message, signature)` outputs
 --->
 
-### Implementation optimizations
-There are several optimizations we should use to speed up verification.
-First, we can use multi-pairings instead of a normal pairing. Roughly
-speaking, this means that we can reuse the "final exponentiation" step
-in all of the pairing operations. In addition, we can carry out
-pre-computation on the public keys for aggregate verification.
+
 
 
 ## Auxiliary Functions {#auxiliary}
@@ -702,10 +661,10 @@ indistinguishable from the uniform distribution over the group.
 
 The following g1_membership_test and g1_membership_test algorithms is to
 check if a E1 or E2 point is in the correct prime subgroup. Example:
- 
-  r = 0x73eda753299d7d483339d80809a1d80553bda402fffe5bfeffffffff00000001 
- 
-for curve BLS12-381. 
+
+  r = 0x73eda753299d7d483339d80809a1d80553bda402fffe5bfeffffffff00000001
+
+for curve BLS12-381.
 
 
 
@@ -741,12 +700,7 @@ for curve BLS12-381.
   1.  r = order of group G2
   1.  if r * P  == 1 return "VALID", otherwise, return "INVALID"
 
-## Security analysis
 
-The BLS signature scheme achieves strong message unforgeability and aggregation
-unforgeability under the co-CDH
-assumption, namely that given P1, a*P1, P2, b*P2, it is hard to
-compute {ab}*P1. [BLS01, BGLS03]
 
 # Security Considerations
 
@@ -930,7 +884,56 @@ following:
 
 The verification algorithm should return true for the testing vectors in this section.
 --->
-# Appendix B. Reference
+
+# Appendix B. Security
+
+## Definitions
+### Message Unforgeability
+
+Consider the following game between an adversary and a challenger.
+The challenger generates a key-pair (PK, SK) and gives PK to the adversary.
+The adversary may repeatedly query the challenger on any message message to obtain
+its corresponding signature signature. Eventually the adversary outputs a pair
+(message', signature').
+
+Unforgeability means no adversary can produce a pair (message', signature') for a message message' which he never queried the challenger and Verify(PK, message, signature) outputs VALID.
+
+
+### Strong Message Unforgeability
+
+In the strong unforgeability game, the game proceeds as above, except
+no adversary should be able to produce a pair (message', signature') that verifies (i.e. Verify(PK, message, signature)
+outputs VALID) given that he never queried the challenger on message', or if he did query and obtained
+a reply signature, then signature != signature'.
+
+More informally, the strong unforgeability means that no adversary can produce
+a different signature (not provided by the challenger) on a message which he queried before.
+
+### Aggregation Unforgeability
+
+Consider the following game between an adversary and a challenger.
+The challenger generates a key-pair (PK, SK) and gives PK to the adversary.
+The adversary may repeatedly query the challenger on any message message to obtain
+its corresponding signature signature.
+Eventually the adversary outputs a sequence ((PK_1, message_1), ..., (PK_n, message_n), (PK, message), signature).
+
+Aggregation unforgeability means that no adversary can produce a sequence
+where it did not query the challenger on the message message, and
+Verify-Aggregated((PK_1, message_1), ..., (PK_n, message_n), (PK, message), signature) outputs VALID.
+
+We note that aggregation unforgeability implies message unforgeability.
+
+TODO: We may also consider a strong aggregation unforgeability property.
+
+## Security analysis
+
+The BLS signature scheme achieves strong message unforgeability and aggregation
+unforgeability under the co-CDH
+assumption, namely that given P1, a*P1, P2, b*P2, it is hard to
+compute {ab}*P1. [BLS01, BGLS03]
+
+
+# Appendix C. Reference
 
 [BLS 01] Dan Boneh, Ben Lynn, Hovav Shacham:
 Short Signatures from the Weil Pairing. ASIACRYPT 2001: 514-532.
