@@ -724,13 +724,17 @@ for curve BLS12-381.
 ## Verifying public keys
 When users register a public key, we should ensure that it is well-formed.
 This requires a G2 membership test. In applications where we use aggregation,
-we would further require that users prove knowledge of the corresponding secret key
-during registration to prevent rogue key attacks [Boneh-Drijvers-Neven 18a](https://crypto.stanford.edu/~dabo/pubs/papers/BLSmultisig.html).
+we need to enforce security against rogue key attacks [Boneh-Drijvers-Neven 18a](https://crypto.stanford.edu/~dabo/pubs/papers/BLSmultisig.html).
+This can be achieved in one of three ways:
 
-TBA: additional discussion on this, e.g. [Ristenpart-Yilek 06], and alternative
-mechanisms for securing aggregation against rogue key attacks, e.g.
-[Boneh-Drijvers-Neven 18b](https://eprint.iacr.org/2018/483.pdf); there, pre-processing public keys would speed up
-verification.
+* users must provide a proof of posession of the secret
+keys while registering the public key (see concrete mechanisms in [Ristenpart-Yilek 06]).
+
+* always sign a concatenation of the public key and the message (BGLS, [Bellare-Namprempre-Nevens 07](https://eprint.iacr.org/2006/285)).
+
+* modify the verification algorithm, e.g.
+[Boneh-Drijvers-Neven 18b](https://eprint.iacr.org/2018/483.pdf);
+there, pre-processing public keys would speed up verification.
 
 ## Skipping membership check
 Several existing implementations skip step 4 (membership in G1) in Verify.
