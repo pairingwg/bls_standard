@@ -132,6 +132,23 @@ are used for authenticating transactions as well as votes during the consensus
 protocol, and the use of aggregation significantly reduces the bandwidth
 and storage requirements.
 
+## Comparison with ECDSA
+
+The following comparison assumes BLS signatures with curve BLS12-381, targeting
+128 bits security.
+
+For 128 bits security, ECDSA takes 37 and 79 micro-seconds to sign and verify
+a signature on a typical laptop. In comparison, for the same level of security,
+BLS takes 370 and 2700 micro-seconds to sign and verify
+a signature.
+
+In terms of sizes, ECDSA uses 32 bytes for public keys and  64 bytes for signatures;
+while BLS uses 96 bytes for public keys, and  48 bytes for signatures.
+Alternatively, BLS can also be instantiated with 48 bytes of public keys and 96 bytes
+of signatures.
+BLS also allows for signature compression. In other words, a single signature is
+sufficient to anthenticate multiple messages and public keys.
+
 <!---
 In addition, the BLS signature scheme is also integrated into major blockchain
 projects such as Algorand, Chia, Dfinity, Ethereum.
@@ -734,7 +751,8 @@ the scalar.
 
 ## Randomness considerations
 BLS signatures are deterministic. This protects against attacks
-arising from signing with bad randomness.
+arising from signing with bad randomness, for example, the nounce reusing
+attack in ECDSA [HDWH 12].
 
 <!---
 For signing, we require variable-base exponentiation in G1 to be constant-time, and
@@ -941,7 +959,10 @@ Short Signatures from the Weil Pairing. ASIACRYPT 2001: 514-532.
 [BGLS 03] Dan Boneh, Craig Gentry, Ben Lynn, Hovav Shacham:
 Aggregate and Verifiably Encrypted Signatures from Bilinear Maps. EUROCRYPT 2003: 416-432.
 
-
+[HDWH 12]
+    Heninger, N., Durumeric, Z., Wustrow, E., Halderman, J.A.:
+    "Mining your Ps and Qs: Detection of widespread weak keys in network devices.",
+    USENIX 2012.
 
 [I-D.irtf-cfrg-hash-to-curve]
     S. Scott, N. Sullivan, and C. Wood:
