@@ -727,14 +727,15 @@ This requires a G2 membership test. In applications where we use aggregation,
 we need to enforce security against rogue key attacks [Boneh-Drijvers-Neven 18a](https://crypto.stanford.edu/~dabo/pubs/papers/BLSmultisig.html).
 This can be achieved in one of three ways:
 
-* users must provide a proof of posession of the secret
-keys while registering the public key (see concrete mechanisms in [Ristenpart-Yilek 06]).
+* Message augmentation:    pk = g^sk,   sig = H(pk, m)^sk
+(BGLS, [Bellare-Namprempre-Nevens 07](https://eprint.iacr.org/2006/285)).
 
-* always sign a concatenation of the public key and the message (BGLS, [Bellare-Namprempre-Nevens 07](https://eprint.iacr.org/2006/285)).
+* Proof of possession:     pk = ( u=g^sk,  H'(u)^sk ),    sig = H(m)^sk
+(see concrete mechanisms in [Ristenpart-Yilek 06])
 
-* modify the verification algorithm, e.g.
-[Boneh-Drijvers-Neven 18b](https://eprint.iacr.org/2018/483.pdf);
-there, pre-processing public keys would speed up verification.
+* Linear combination:    agg =  sig_1^t_1 ... sig_n^t_n
+(see [Boneh-Drijvers-Neven 18b](https://eprint.iacr.org/2018/483.pdf);
+there, pre-processing public keys would speed up verification.)
 
 ## Skipping membership check
 Several existing implementations skip step 4 (membership in G1) in Verify.
