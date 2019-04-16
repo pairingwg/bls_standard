@@ -13,7 +13,7 @@ to the hash-to-curve spec).
    - The destination group is the set of points in the G1 group
    of the BLS12_381 curve.
    
-   - hash2base is SHA-512 modulo p
+   - hash2base uses SHA-512 modulo p with label "H2C-BLS12_381_1-SHA512-FT-Clear"
 
    - HashToCurve is the Fouque-Tibouchi method map2curve_ft
    
@@ -25,9 +25,9 @@ to the hash-to-curve spec).
 
 * Add a contextualized extension of the scheme analogous to Ed25519ctx.
 
-* Add implementation for message augmentation where we use the context
-mode to implement domain separation for the proofs-of-possession and
-the actual signing.
+* Add implementation for proof-of-possession mechanism against rogue
+key attacks where we use the context mode to implement domain
+separation for the proofs of possession and the actual signing.
 
 
 ## Minor
