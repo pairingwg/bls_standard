@@ -18,10 +18,10 @@ to the hash-to-curve spec).
    - HashToCurve is the Fouque-Tibouchi method map2curve_ft
    
    - The final output is multiplied by the cofactor.										
-
-  We will remove the suite_string since this is already taken into
-  account in the hashing algorithm (namely, the label in hash2base) in
-  the hash-to-curve spec.
+   - need to revisit suite_string and see how it interacts with the
+   suite_string that is in the hashing algorithm (namely, the label in hash2base) in
+   the hash-to-curve spec. For instance, suite_string here may specify
+   the mechanism used for rogue key attacks.
 
 * Add a contextualized extension of the scheme analogous to Ed25519ctx.
 
