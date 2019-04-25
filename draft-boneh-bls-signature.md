@@ -728,7 +728,7 @@ we need to enforce security against rogue key attacks [Boneh-Drijvers-Neven 18a]
 This can be achieved in one of three ways:
 
 * Message augmentation:    pk = g^sk,   sig = H(pk, m)^sk
-(BGLS, [Bellare-Namprempre-Nevens 07](https://eprint.iacr.org/2006/285)).
+(BGLS, [Bellare-Namprempre-Neven 07](https://eprint.iacr.org/2006/285)).
 
 * Proof of possession:     pk = ( u=g^sk,  H'(u)^sk ),    sig = H(m)^sk
 (see concrete mechanisms in [Ristenpart-Yilek 06])
