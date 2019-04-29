@@ -25,6 +25,10 @@ to the hash-to-curve spec).
 
 * Add a contextualized extension of the scheme analogous to Ed25519ctx.
 
+* Follow the EdDSA standards for [key generation](https://tools.ietf.org/html/rfc8032#section-5.1).
+  There, the private key is a 32-byte string, with a SHA-512 hashing to mitigate
+  weak randomness in key generation.
+
 * Add implementation for proof-of-possession mechanism against rogue
 key attacks where we use the context mode to implement domain
 separation for the proofs of possession and the actual signing.
