@@ -1,5 +1,5 @@
 
-# Proposal for BLS Signatures over BLS12-381 (Apr 29, 2019)
+# Specification for BLS Signatures over BLS12-381 v1 (Apr 29, 2019)
 
 ## Preliminaries
 
