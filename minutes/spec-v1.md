@@ -48,12 +48,13 @@ As before, replace P1,G1 with P2,G2
 
 ## TODOs
 
+* Specify how to represent curve points as octet strings.
+
 * Specify a variant where we sign the concatenation of the public key and the message. Here,
-the public key has a fixed length (which is determined by the ciphersuite).
+the public key has a fixed length (which is determined by the ciphersuite), and we need to
+fix a representation of the public key as an octet string.
 
 * Generate test vectors for ciphersuite being all-zeroes.
-
-* Specify how to represent curve points as octet strings.
 
 * To add a ciphersuite "look up" table. The ciphersuite string will tell us
     - which curve to use
@@ -70,8 +71,8 @@ here is that only the final application (e.g. signatures or VRFs) should provide
 
 ## Notes
 
-* Assume SHA512 for now. If we decide to switch back to SHA256 later, the change should
-be straight-forward.
+* The specification refers to "SHA" for now. If we decide to support SHA512 later, the change
+should be straight-forward.
 
 * There will be no explicit pre-hash mode. If the signature algorithm
 gets as input the hash H(M) of a huge message, then we should think of
