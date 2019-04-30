@@ -8,7 +8,7 @@ Note that it does not cover aggregation or protection against rogue key attacks.
 
 ## Preliminaries
 
-* [P1], [P2] are generators for the BLS12-381 curve; subgroups are of order r.
+* [P1], [P2] are generators for the BLS12-381 curve; subgroups are of order r. We use generators specified in the pairing-friendly curves standard: https://tools.ietf.org/html/draft-yonezawa-pairing-friendly-curves-01#section-4.2
 
 * ciphersuite is a fixed-length 8-bit string
 
