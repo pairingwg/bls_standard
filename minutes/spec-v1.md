@@ -4,7 +4,7 @@
 This is an initial specification for BLS signatures. The objective is
 to provide a specification which enable consistent implementations
 with respect to low-level encoding and algorithmic choices.
-Note that it does not cover protection against rogue key attacks. 
+Note that it does not cover aggregation or protection against rogue key attacks. 
 
 ## Preliminaries
 
@@ -19,7 +19,7 @@ Note that it does not cover protection against rogue key attacks.
 * SHA(x) = SHA256(x || 0) || SHA256(x || 1), where 0, 1 are bits.
 
 * a || b denotes (naive) string concatenation. In all our applications below,
-a has a fixed length, so decoding is unique.
+a or b has a fixed length, so decoding is unique.
 
 * WB18 [implementation](https://github.com/kwantam/bls12-381_hash)
 
@@ -65,6 +65,8 @@ the public key has a fixed length (which is determined by the ciphersuite).
     proof of posession)
 
 * To decide if we want separate ciphersuite strings for the signature scheme and hash-to-curve.
+Given that hash-to-curve is only used as an intermediate building, our motivating principle
+here is that only the final application (e.g. signatures or VRFs) should provide the ciphersuite string.
 
 ## Notes
 
