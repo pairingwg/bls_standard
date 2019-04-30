@@ -1,6 +1,11 @@
 
 # Specification for BLS Signatures over BLS12-381 v1 (Apr 29, 2019)
 
+This is an initial specification for BLS signatures. The objective is
+to provide a specification which enable consistent implementations
+with respect to low-level encoding and algorithmic choices.
+Note that it does not cover protection against rogue key attacks. 
+
 ## Preliminaries
 
 * [P1], [P2] are generators for the BLS12-381 curve; subgroups are of order r.
