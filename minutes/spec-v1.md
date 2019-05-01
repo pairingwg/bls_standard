@@ -21,27 +21,43 @@ a or b has a fixed length, so decoding is unique.
 
 ### Hash to curve
 
-We follow WB18 [paper](https://eprint.iacr.org/2019/403), [implementation](https://github.com/kwantam/bls12-381_hash). We will rely on the following subroutines:
+We follow WB19 [paper](https://eprint.iacr.org/2019/403), [implementation](https://github.com/kwantam/bls12-381_hash). We will rely on the following subroutines:
 
-     Hp( x || byte b ) :=
-     OS2IP ( SHA256 ( SHA256 ( x ) || b || 0x00 ) ||
-     SHA256 ( SHA256 ( x ) || b || 0x01 ) ) mod p
+* hash_to_field is a generic construction that uses a cryptographic hash function to output field elements:
 
-     Hp2 ( x  || byte b ) :=
-     OS2IP ( SHA256 ( SHA256 ( x ) || b || 0x00 ) ||
-     SHA256 ( SHA256 ( x ) || b || 0x01 ) ) mod p
-     + sqrt(-1) * OS2IP ( SHA256 ( SHA256 ( x ) || b || 0x02 ) ||
-     SHA256 ( SHA256 ( x ) || b || 0x03 ) ) mod p
+~~~
+hash_to_field(msg, p, m, hash_fn, hash_reps)
 
+Parameters:
+  - msg is the message to hash
+  - p and m specify the field as GF(p^m)
+  - hash_fn is a hash function, e.g., SHA256
+  - hash_reps is the number of concatenated hash outputs
+    used to produce an element of F_p
 
-* hashtoG1(x in {0,1}*) is construction #2 in WB18, instantiated with `Hp (x || 0x00)` and `Hp (x || 0x01)`. In particular,
+hash_to_field(msg, p, m, hash_fn, hash_reps) :=
+    msg' = hash_fn(msg)
+    for i in (1, ..., m):
+        t = ""  // initialize to the empty string
+        for j in (1, ..., hash_reps):
+            t = t || hash_fn( msg' || I2OSP(i, 1) || I2OSP(j, 1) )
+        e_i = OS2IP(t) mod p
+    return (e_1, ..., e_m)
+~~~
 
-        hashtoG1(x) := Map1 ( OS2IP ( SHA256 ( SHA256 ( x ) || 0x00 || 0x00 ) ||
-               SHA256 ( SHA256 ( x ) || 0x00 || 0x01 ) mod p ) *
-        Map1 ( OS2IP( SHA256 ( SHA256 ( x ) || 0x01 || 0x00 ) ||
-               SHA256 ( SHA256 ( x ) || 0x01 || 0x01 ) mod p )^{1-z}
+* Using the above, we define Hp and Hp2 as:
 
-* hashtoG2(x in {0,1}*) is construction #5 in WB18, instantiated with `Hp2 (x || 0x00)` and `Hp2 (x || 0x01)`.
+    Hp(msg) := hash_to_field(msg, p, 1, SHA256, 2)
+
+    Hp2(msg) := hash_to_field(msg, p, 2, SHA256, 2)
+
+* Map1 and Map2 are the maps given in Section 4 of [WB19](https://eprint.iacr.org/2019/403).
+
+* hashtoG1(msg in {0,1}\*) is construction #2 in WB19, instantiated with `Hp (msg || 0x00)` and `Hp (msg || 0x01)`. In particular,
+
+        hashtoG1(msg) := (Map1(Hp(msg || 0x00)) * Map1(Hp(msg || 0x01)))^{1-z}
+
+* hashtoG2(msg in {0,1}\*) is construction #5 in WB19, instantiated with `Hp2 (msg || 0x00)` and `Hp2 (msg || 0x01)`.
 
 
 ## Basic signature in G1
@@ -52,7 +68,7 @@ We follow WB18 [paper](https://eprint.iacr.org/2019/403), [implementation](https
     - compute x' = `O2SIP( SHA256(x || 0x00) || SHA256(x || 0x01) ) mod r`
     - pk := x' * [P1]
 
-* sign(sk, msg in {0,1}*, ciphersuite in {0,1}^8)
+* sign(sk, msg in {0,1}\*, ciphersuite in {0,1}^8)
 
     - derive x' from sk as in key generation
     - H = `hashtoG1(ciphersuite || msg)`
@@ -75,7 +91,7 @@ fix a representation of the public key as an octet string.
 * To add a ciphersuite "look up" table. The ciphersuite string will tell us
     - which curve to use
     - whether signatures sit in G1 or in G2
-    - which encoding algorithm to use, e.g. WB18 vs FT12
+    - which encoding algorithm to use, e.g. WB19 vs FT12
     - which data hashing algorithm to use, namely SHA256 vs SHA
     - whether and how we clear the co-factor
     - possibly which mechanism is used to prevent rogue-key attacks (message augmentation vs
