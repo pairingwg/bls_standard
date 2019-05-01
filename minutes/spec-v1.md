@@ -1,5 +1,5 @@
 
-# Specification for BLS Signatures over BLS12-381 v1 (Apr 29, 2019)
+# Specification for BLS Signatures over BLS12-381 v1 (Apr 30, 2019)
 
 This is an initial specification for BLS signatures. The objective is
 to provide a specification which enable consistent implementations
@@ -10,22 +10,20 @@ Note that it does not cover aggregation or protection against rogue key attacks.
 
 * [P1], [P2] are generators for the BLS12-381 curve; subgroups are of order r. We use generators specified in the pairing-friendly curves standard: https://tools.ietf.org/html/draft-yonezawa-pairing-friendly-curves-01#section-4.2
 
-* ciphersuite is a fixed-length 8-bit string
+* ciphersuite is a fixed-length 8-bit string.
 
-* hashtoG1(x in {0,1}*) is construction #2 in WB18, instantiated with SHA (with 512-bit output)
+* WB18 [paper](https://eprint.iacr.org/2019/403) [implementation](https://github.com/kwantam/bls12-381_hash)
+
+* hashtoG1(x in {0,1}*) is construction #2 in WB18, instantiated with SHA (with 512-bit output)  *Note*: More details will be added.
 
 * hashtoG2(x in {0,1}*) is construction #5 in WB18, instantiated with SHA (with 512-bit output)
 
-* SHA(x) = SHA256(x || 0) || SHA256(x || 1), where 0, 1 are bits.
+* SHA(x) = SHA256(x || 0x00) || SHA256(x || 0x01).
 
 * a || b denotes (naive) string concatenation. In all our applications below,
 a or b has a fixed length, so decoding is unique.
 
-* WB18 [implementation](https://github.com/kwantam/bls12-381_hash)
-
-* when converting between bit/octet strings and integers (i.e., int_to_string and string_to_int),
-we use little-endian encoding as defined in the
-[EdDSA spec](https://tools.ietf.org/html/rfc8032#section-5.1.2).
+* we use OS2IP from (RFC8017)[https://tools.ietf.org/html/rfc8017]
 
 
 ## Basic signature in G1
@@ -69,10 +67,16 @@ fix a representation of the public key as an octet string.
 Given that hash-to-curve is only used as an intermediate building, our motivating principle
 here is that only the final application (e.g. signatures or VRFs) should provide the ciphersuite string.
 
-## Notes
+## Design Rationale
 
-* The specification refers to "SHA" for now. If we decide to support SHA512 later, the change
-should be straight-forward.
+* We hash the randomness during key generation to mitigate any attacks arising from
+weak sources of randomness. This was also done in [EdDSA spec](https://tools.ietf.org/html/rfc8032).
+
+* The specification uses SHA256 as used in many existing implementations.
+The text refers to "SHA" for now. If we decide to support SHA512 later, the change should be straight-forward.
+
+* For hashing to curves, we use indifferentiable hashing in order to be "future-proof",
+even though a weaker security notion (with a slightly more efficient instantiation) suffices for security for BLS signatures.
 
 * There will be no explicit pre-hash mode. If the signature algorithm
 gets as input the hash H(M) of a huge message, then we should think of
