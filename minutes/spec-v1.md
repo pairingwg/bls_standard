@@ -71,7 +71,7 @@ product of V with the vector (α^0, ..., α^{m-1}). For BLS12-381 G2, α = sqrt(
 
     - sk = x is 32 octets (256 bits)
     - compute x' = `hash_to_field(x, 0, r, 1, SHA256, 2)`
-    - pk := x' * [P1]
+    - pk := x' * [P2]
 
 * sign(sk, msg in {0,1}\*, ciphersuite in {0,1}^8)
 
@@ -81,7 +81,7 @@ product of V with the vector (α^0, ..., α^{m-1}). For BLS12-381 G2, α = sqrt(
 
 ## Basic signature in G2
 
-As before, replace P1,G1 with P2,G2
+As before, replace P2, hashtoG1 with P1, hashtoG2
 
 ## TODOs
 
