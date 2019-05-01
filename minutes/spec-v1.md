@@ -45,11 +45,15 @@ hash_to_field(msg, p, m, hash_fn, hash_reps) :=
     return (e_1, ..., e_m)
 ~~~
 
-* Using the above, we define Hp and Hp2 as:
+In the above, an element of the extension field GF(p^m) is represented by a vector V of elements of GF(p).
+GF(p^m) defines a primitive element α, and the vector V represents the element determined by the inner
+product of V with the vector (α^0, ..., α^{m-1}). For BLS12-381 G2, α = sqrt(-1).
 
-    Hp(msg) := hash_to_field(msg, p, 1, SHA256, 2)
+* Using the above, define Hp and Hp2 as:
 
-    Hp2(msg) := hash_to_field(msg, p, 2, SHA256, 2)
+      Hp(msg)  := hash_to_field(msg, p, 1, SHA256, 2)
+
+      Hp2(msg) := hash_to_field(msg, p, 2, SHA256, 2)
 
 * Map1 and Map2 are the maps given in Section 4 of [WB19](https://eprint.iacr.org/2019/403).
 
