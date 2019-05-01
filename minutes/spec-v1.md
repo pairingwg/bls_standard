@@ -21,27 +21,48 @@ a or b has a fixed length, so decoding is unique.
 
 ### Hash to curve
 
-We follow WB18 [paper](https://eprint.iacr.org/2019/403), [implementation](https://github.com/kwantam/bls12-381_hash). We will rely on the following subroutines:
+We follow WB19 [paper](https://eprint.iacr.org/2019/403), [implementation](https://github.com/kwantam/bls12-381_hash). We will rely on the following subroutines:
 
-     Hp( x || byte b ) :=
-     OS2IP ( SHA256 ( SHA256 ( x ) || b || 0x00 ) ||
-     SHA256 ( SHA256 ( x ) || b || 0x01 ) ) mod p
+* hash_to_field is a generic construction that uses a cryptographic hash function to output field elements:
 
-     Hp2 ( x  || byte b ) :=
-     OS2IP ( SHA256 ( SHA256 ( x ) || b || 0x00 ) ||
-     SHA256 ( SHA256 ( x ) || b || 0x01 ) ) mod p
-     + sqrt(-1) * OS2IP ( SHA256 ( SHA256 ( x ) || b || 0x02 ) ||
-     SHA256 ( SHA256 ( x ) || b || 0x03 ) ) mod p
+~~~
+hash_to_field(msg, ctr, p, m, hash_fn, hash_reps)
 
+Parameters:
+  - msg is the message to hash
+  - ctr is an integer < 2^8 used to orthogonalize hash functions
+  - p and m specify the field as GF(p^m)
+  - hash_fn is a hash function, e.g., SHA256
+  - hash_reps is the number of concatenated hash outputs
+    used to produce an element of F_p
 
-* hashtoG1(x in {0,1}*) is construction #2 in WB18, instantiated with `Hp (x || 0x00)` and `Hp (x || 0x01)`. In particular,
+hash_to_field(msg, ctr p, m, hash_fn, hash_reps) :=
+    msg' = hash_fn(msg) || I2OSP(ctr, 1)
+    for i in (1, ..., m):
+        t = ""  // initialize to the empty string
+        for j in (1, ..., hash_reps):
+            t = t || hash_fn( msg' || I2OSP(i, 1) || I2OSP(j, 1) )
+        e_i = OS2IP(t) mod p
+    return (e_1, ..., e_m)
+~~~
 
-        hashtoG1(x) := Map1 ( OS2IP ( SHA256 ( SHA256 ( x ) || 0x00 || 0x00 ) ||
-               SHA256 ( SHA256 ( x ) || 0x00 || 0x01 ) mod p ) *
-        Map1 ( OS2IP( SHA256 ( SHA256 ( x ) || 0x01 || 0x00 ) ||
-               SHA256 ( SHA256 ( x ) || 0x01 || 0x01 ) mod p )^{1-z}
+In the above, an element of the extension field GF(p^m) is represented by a vector V of elements of GF(p).
+GF(p^m) defines a primitive element α, and the vector V represents the element determined by the inner
+product of V with the vector (α^0, ..., α^{m-1}). For BLS12-381 G2, α = sqrt(-1).
 
-* hashtoG2(x in {0,1}*) is construction #5 in WB18, instantiated with `Hp2 (x || 0x00)` and `Hp2 (x || 0x01)`.
+* Using the above, define Hp and Hp2 as:
+
+      Hp(msg, ctr)  := hash_to_field(msg, ctr, p, 1, SHA256, 2)
+
+      Hp2(msg, ctr) := hash_to_field(msg, ctr, p, 2, SHA256, 2)
+
+* Map1 and Map2 are the maps given in Section 4 of [WB19](https://eprint.iacr.org/2019/403).
+
+* hashtoG1(msg in {0,1}\*) is construction #2 in WB19, instantiated with `Hp (msg, 0)` and `Hp (msg, 1)`. In particular,
+
+        hashtoG1(msg) := (Map1(Hp(msg, 0)) * Map1(Hp(msg, 1)))^{1-z}
+
+* hashtoG2(msg in {0,1}\*) is construction #5 in WB19, instantiated with `Hp2 (msg, 0)` and `Hp2 (msg, 1)`.
 
 
 ## Basic signature in G1
@@ -49,10 +70,10 @@ We follow WB18 [paper](https://eprint.iacr.org/2019/403), [implementation](https
 * key generation:
 
     - sk = x is 32 octets (256 bits)
-    - compute x' = `O2SIP( SHA256(x || 0x00) || SHA256(x || 0x01) ) mod r`
+    - compute x' = `hash_to_field(x, 0, r, 1, SHA256, 2)`
     - pk := x' * [P1]
 
-* sign(sk, msg in {0,1}*, ciphersuite in {0,1}^8)
+* sign(sk, msg in {0,1}\*, ciphersuite in {0,1}^8)
 
     - derive x' from sk as in key generation
     - H = `hashtoG1(ciphersuite || msg)`
@@ -75,7 +96,7 @@ fix a representation of the public key as an octet string.
 * To add a ciphersuite "look up" table. The ciphersuite string will tell us
     - which curve to use
     - whether signatures sit in G1 or in G2
-    - which encoding algorithm to use, e.g. WB18 vs FT12
+    - which encoding algorithm to use, e.g. WB19 vs FT12
     - which data hashing algorithm to use, namely SHA256 vs SHA
     - whether and how we clear the co-factor
     - possibly which mechanism is used to prevent rogue-key attacks (message augmentation vs
