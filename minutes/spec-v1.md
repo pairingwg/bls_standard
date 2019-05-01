@@ -76,6 +76,7 @@ product of V with the vector (α^0, ..., α^{m-1}). For BLS12-381 G2, α = sqrt(
 
     - derive x' from sk as in key generation
     - H = `hashtoG1(msg || I2OSP(len(msg), 8) || ciphersuite)`
+      where `len(msg)` is the length of msg in bytes.
     - output x' * H
 
 ## Basic signature in G2
