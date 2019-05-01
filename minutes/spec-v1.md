@@ -19,35 +19,29 @@ a or b has a fixed length, so decoding is unique.
 
 * we use OS2IP from [RFC8017](https://tools.ietf.org/html/rfc8017)
 
-#### Hash to curve
+### Hash to curve
 
-We follow WB18 [paper](https://eprint.iacr.org/2019/403) [implementation](https://github.com/kwantam/bls12-381_hash). We will rely on the following subroutines:
+We follow WB18 [paper](https://eprint.iacr.org/2019/403), [implementation](https://github.com/kwantam/bls12-381_hash). We will rely on the following subroutines:
 
-* Hp( x || byte b ) :=
-
-    OS2IP ( SHA256 ( SHA256 ( x ) || b || 0x00 ) ||
+     Hp( x || byte b ) :=
+     OS2IP ( SHA256 ( SHA256 ( x ) || b || 0x00 ) ||
      SHA256 ( SHA256 ( x ) || b || 0x01 ) ) mod p
 
-* Hp2 ( x  || byte b ) :=
-
-    OS2IP ( SHA256 ( SHA256 ( x ) || b || 0x00 ) ||
+     Hp2 ( x  || byte b ) :=
+     OS2IP ( SHA256 ( SHA256 ( x ) || b || 0x00 ) ||
      SHA256 ( SHA256 ( x ) || b || 0x01 ) ) mod p
-
-    + sqrt(-1) * OS2IP ( SHA256 ( SHA256 ( x ) || b || 0x02 ) ||
+     + sqrt(-1) * OS2IP ( SHA256 ( SHA256 ( x ) || b || 0x02 ) ||
      SHA256 ( SHA256 ( x ) || b || 0x03 ) ) mod p
 
 
-* hashtoG1(x in {0,1}*) is construction #2 in WB18, instantiated with Hp (x || 0x00)
-and Hp (x || 0x01). In particular,
+* hashtoG1(x in {0,1}*) is construction #2 in WB18, instantiated with `Hp (x || 0x00)` and `Hp (x || 0x01)`. In particular,
 
-   hashtoG1(x) := Map1 ( OS2IP ( SHA256 ( SHA256 ( x ) || 0x00 || 0x00 ) ||
+        hashtoG1(x) := Map1 ( OS2IP ( SHA256 ( SHA256 ( x ) || 0x00 || 0x00 ) ||
                SHA256 ( SHA256 ( x ) || 0x00 || 0x01 ) mod p ) *
-
-   Map1 ( OS2IP( SHA256 ( SHA256 ( x ) || 0x01 || 0x00 ) ||
+        Map1 ( OS2IP( SHA256 ( SHA256 ( x ) || 0x01 || 0x00 ) ||
                SHA256 ( SHA256 ( x ) || 0x01 || 0x01 ) mod p )^{1-z}
 
-* hashtoG2(x in {0,1}*) is construction #5 in WB18, instantiated with Hp2 (x || 0x00)
-and Hp2 (x || 0x01).
+* hashtoG2(x in {0,1}*) is construction #5 in WB18, instantiated with `Hp2 (x || 0x00)` and `Hp2 (x || 0x01)`.
 
 
 ## Basic signature in G1
@@ -55,13 +49,13 @@ and Hp2 (x || 0x01).
 * key generation:
 
     - sk = x is 32 octets (256 bits)
-    - compute x' = O2SIP( SHA256(x || 0x00) || SHA256(x || 0x01) ) mod r
+    - compute x' = `O2SIP( SHA256(x || 0x00) || SHA256(x || 0x01) ) mod r`
     - pk := x' * [P1]
 
 * sign(sk, msg in {0,1}*, ciphersuite in {0,1}^8)
 
     - derive x' from sk as in key generation
-    - H = hashtoG1(ciphersuite || msg)
+    - H = `hashtoG1(ciphersuite || msg)`
     - output x' * H
 
 ## Basic signature in G2
