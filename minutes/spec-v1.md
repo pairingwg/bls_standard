@@ -57,11 +57,11 @@ product of V with the vector (α^0, ..., α^{m-1}). For BLS12-381 G2, α = sqrt(
 
 * Map1 and Map2 are the maps given in Section 4 of [WB19](https://eprint.iacr.org/2019/403).
 
-* hashtoG1(msg in {0,1}\*) is construction #2 in WB19, instantiated with `Hp (msg || 0x00)` and `Hp (msg || 0x01)`. In particular,
+* hashtoG1(msg in {0,1}\*) is construction #2 in WB19, instantiated with `Hp (msg || I2OSP(0, 1))` and `Hp (msg || I2OSP(1, 1))`. In particular,
 
-        hashtoG1(msg) := (Map1(Hp(msg || 0x00)) * Map1(Hp(msg || 0x01)))^{1-z}
+        hashtoG1(msg) := (Map1(Hp(msg || I2OSP(0, 1))) * Map1(Hp(msg || I2OSP(1, 1))))^{1-z}
 
-* hashtoG2(msg in {0,1}\*) is construction #5 in WB19, instantiated with `Hp2 (msg || 0x00)` and `Hp2 (msg || 0x01)`.
+* hashtoG2(msg in {0,1}\*) is construction #5 in WB19, instantiated with `Hp2 (msg || I2OSP(0, 1))` and `Hp2 (msg || I2OSP(1, 1))`.
 
 
 ## Basic signature in G1
@@ -69,13 +69,13 @@ product of V with the vector (α^0, ..., α^{m-1}). For BLS12-381 G2, α = sqrt(
 * key generation:
 
     - sk = x is 32 octets (256 bits)
-    - compute x' = `O2SIP( SHA256(x || 0x00) || SHA256(x || 0x01) ) mod r`
+    - compute x' = `hash_to_field(x, r, 1, SHA256, 2)`
     - pk := x' * [P1]
 
 * sign(sk, msg in {0,1}\*, ciphersuite in {0,1}^8)
 
     - derive x' from sk as in key generation
-    - H = `hashtoG1(ciphersuite || msg)`
+    - H = `hashtoG1(msg || I2OSP(len(msg), 8) || ciphersuite)`
     - output x' * H
 
 ## Basic signature in G2
