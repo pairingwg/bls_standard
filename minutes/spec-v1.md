@@ -36,7 +36,7 @@ Parameters:
   - hash_reps is the number of concatenated hash outputs
     used to produce an element of F_p
 
-hash_to_field(msg, ctr p, m, hash_fn, hash_reps) :=
+hash_to_field(msg, ctr, p, m, hash_fn, hash_reps) :=
     msg' = hash_fn(msg) || I2OSP(ctr, 1)
     for i in (1, ..., m):
         t = ""  // initialize to the empty string
