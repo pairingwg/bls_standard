@@ -1,5 +1,7 @@
 
-# Specification for BLS Signatures over BLS12-381 v1 (Apr 30, 2019)
+# Specification for BLS Signatures over BLS12-381 v1
+
+**Initial draft: Apr 29, 2019. Current verison: May 1, 2019.**
 
 This is an initial specification for BLS signatures. The objective is
 to provide a specification which enable consistent implementations
@@ -11,8 +13,6 @@ Note that it does not cover aggregation or protection against rogue key attacks.
 * [P1], [P2] are generators for the BLS12-381 curve; subgroups are of order r. We use generators specified in the pairing-friendly curves standard: https://tools.ietf.org/html/draft-yonezawa-pairing-friendly-curves-01#section-4.2
 
 * ciphersuite is a fixed-length 8-bit string.
-
-* SHA(x) = SHA256(x || 0x00) || SHA256(x || 0x01).
 
 * a || b denotes (naive) string concatenation. In all our applications below,
 a or b has a fixed length, so decoding is unique.
