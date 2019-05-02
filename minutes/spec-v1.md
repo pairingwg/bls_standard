@@ -102,6 +102,8 @@ fix a representation of the public key as an octet string.
     - possibly which mechanism is used to prevent rogue-key attacks (message augmentation vs
     proof of posession)
 
+  As a place-holder, we will use 0x01 for signatures in G1, 0x02 for signatures in G2.
+
 * To decide if we want separate ciphersuite strings for the signature scheme and hash-to-curve.
 Given that hash-to-curve is only used as an intermediate building, our motivating principle
 here is that only the final application (e.g. signatures or VRFs) should provide the ciphersuite string.
@@ -112,7 +114,7 @@ here is that only the final application (e.g. signatures or VRFs) should provide
 weak sources of randomness. This was also done in [EdDSA spec](https://tools.ietf.org/html/rfc8032).
 
 * The specification uses SHA256 as used in many existing implementations.
-The text refers to "SHA" for now. If we decide to support SHA512 later, the change should be straight-forward.
+If we decide to support SHA512 later, the change should be straight-forward.
 
 * For hashing to curves, we use indifferentiable hashing in order to be "future-proof",
 even though a weaker security notion (with a slightly more efficient instantiation) suffices for security for BLS signatures.
