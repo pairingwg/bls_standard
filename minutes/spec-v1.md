@@ -29,7 +29,7 @@ We follow WB19 [paper](https://eprint.iacr.org/2019/403), [implementation](https
 hash_to_field(msg, ctr, p, m, hash_fn, hash_reps)
 
 Parameters:
-  - msg is the message to hash
+  - msg is an octet string to be hashed.
   - ctr is an integer < 2^8 used to orthogonalize hash functions
   - p and m specify the field as GF(p^m)
   - hash_fn is a hash function, e.g., SHA256
