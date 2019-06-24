@@ -27,7 +27,7 @@
 
      * Armando: implementation in Go, some assembly implementations
 
-      * Riad: Berkeley folks, [JEDI](https://people.eecs.berkeley.edu/~raluca/JEDIFinal.pdf), some low-level
+     * Riad: Berkeley folks, [JEDI](https://people.eecs.berkeley.edu/~raluca/JEDIFinal.pdf), some low-level
 	  [implementations](https://github.com/ucbrise/jedi-pairing)
 
      * Hoeteck: which curves to use and which functions to use will be specified in the pairing specific draft.
