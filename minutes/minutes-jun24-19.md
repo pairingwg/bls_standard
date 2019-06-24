@@ -27,7 +27,8 @@
 
      * Armando: implementation in Go, some assembly implementations
 
-     * Riad: Berkeley folks, [JEDI](https://people.eecs.berkeley.edu/~raluca/JEDIFinal.pdf), some low-level implementations
+      * Riad: Berkeley folks, [JEDI](https://people.eecs.berkeley.edu/~raluca/JEDIFinal.pdf), some low-level
+	  [implementations](https://github.com/ucbrise/jedi-pairing)
 
      * Hoeteck: which curves to use and which functions to use will be specified in the pairing specific draft.
 
@@ -48,8 +49,9 @@
 
 * Justin: status of hash-to-curve?
 
-     * Riad: see github page for a substantially updated draft. hash to curve should be updated by the next ietf meeting.
-	 discussion on [domain separation](https://github.com/cfrg/draft-irtf-cfrg-hash-to-curve/issues/124)
+    * Riad: see github [page](https://github.com/cfrg/draft-irtf-cfrg-hash-to-curve) for a substantially updated draft.
+	hash to curve should be updated by the next ietf meeting.
+	discussion on [domain separation](https://github.com/cfrg/draft-irtf-cfrg-hash-to-curve/issues/124)
 
 * Justin / Kirk / Carl: will check that the Etherum production-ready code remains consistent with the current reference implementation / test vectors
 
