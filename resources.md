@@ -3,8 +3,8 @@
 
 ## Implementations
 
-* [Unofficial Reference Implementation](https://github.com/kwantam/bls_sigs_ref)
-* [Kirk](https://github.com/sigp/milagro_bls/tree/experimental/src/test_vectors)
+* [Unofficial Reference Implementation](https://github.com/kwantam/bls_sigs_ref) (Riad S. Wahby)
+* [Sigma Prime](https://github.com/sigp/milagro_bls/tree/experimental/src/test_vectors) (Kirk)
 
 ## Related Drafts
 
@@ -14,3 +14,4 @@
 ## Additional Proposals
 
 * [serialization](https://github.com/pairingwg/bls_standard/issues/16) format for BLS12-381
+* [fast verification](https://ethresear.ch/t/fast-verification-of-multiple-bls-signatures/5407) of multiple signatures
