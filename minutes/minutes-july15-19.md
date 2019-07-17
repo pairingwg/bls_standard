@@ -20,13 +20,13 @@ zhenfei Zhang
 ----------------
 
 Useful links:
-[Pairing draft](https://github.com/pairingwg/pfc_standard)
-[Hash to curve draft](https://tools.ietf.org/html/draft-irtf-cfrg-hash-to-curve-04)
-Current references:
-* https://github.com/kwantam/bls_sigs_ref
-* https://github.com/sigp/milagro_bls/
-* https://github.com/hyperledger/ursa/blob/master/libursa/src/bls/mod.rs
-* https://github.com/mikelodder7/bls12-381-comparison
+* [Pairing draft](https://github.com/pairingwg/pfc_standard)
+* [Hash to curve draft](https://tools.ietf.org/html/draft-irtf-cfrg-hash-to-curve-04)
+* Current references:
+ * https://github.com/kwantam/bls_sigs_ref
+ * https://github.com/sigp/milagro_bls/
+ * https://github.com/hyperledger/ursa/blob/master/libursa/src/bls/mod.rs
+ * https://github.com/mikelodder7/bls12-381-comparison
 
 
 ----------------
