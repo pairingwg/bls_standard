@@ -1,43 +1,39 @@
-# BLS Standard Draft -- Plans
+# BLS Standard Draft -- Plans (Jul 31, 2019)
 
 We outline our plans for the next iteration of the draft.
 
 ## Major
 
-* Add a section for signatures defined over the BLS12-381 curve,
-following the [EdDSA](https://tools.ietf.org/html/rfc8032) spec.
+* Refer to hash-to-curve spec.
 
-* For hash_to_G1, we will use H2C-BLS12_381_1-SHA512-FT-Clear (to be added
-to the hash-to-curve spec).
+* Ciphersuite for BLS signatures will include (i) ciphersuite for
+  hash-to-curve which specifies the curve and which groups the 
+  public keys and signatures live in, as well as the underlying
+  "data hash" (i.e. SHA256, etc), (ii) rogue-key protection
+  mechanism (POP vs AUG). E.g. BLS12381G2-SHA256-SSWU-RO-AUG,
+  encoded in ASCII as an octet string.
 
-   - The destination group is the set of points in the G1 group
-   of the BLS12_381 curve.
-   
-   - hash2base uses SHA-512 modulo p with label "H2C-BLS12_381_1-SHA512-FT-Clear"
+* For proof-of-possession mechanism against rogue
+  key attacks, the ciphersuite will provide domain
+  separation for the proofs of possession and the actual signing.
 
-   - HashToCurve is the Fouque-Tibouchi method map2curve_ft
-   
-   - The final output is multiplied by the cofactor.										
-   - need to revisit suite_string and see how it interacts with the
-   suite_string that is in the hashing algorithm (namely, the label in hash2base) in
-   the hash-to-curve spec. For instance, suite_string here may specify
-   the mechanism used for rogue key attacks.
+* Ciphersuite will be specified via the parameter DST for hash-to-curve.
 
-* Add a contextualized extension of the scheme analogous to Ed25519ctx.
+* For message augmentation, we will use "pk || message" as the input
+  to hash-to-curve.
 
-* Follow the EdDSA standards for [key generation](https://tools.ietf.org/html/rfc8032#section-5.1).
-  There, the private key is a 32-byte string, with a SHA-512 hashing to mitigate
-  weak randomness in key generation.
+* Signing will take variable-length messages as in hash-to-curve. For
+"pre-hashed messages", the signing algorithm takes as input the
+hash. As long as the pre-hash algorithm is collision-resistant, a
+standard cryptographic argument guarantees that the signature
+authenticates the message.
 
-* Add implementation for proof-of-possession mechanism against rogue
-key attacks where we use the context mode to implement domain
-separation for the proofs of possession and the actual signing.
+* We will assume access to serialize and unserialize algorithms from
+the underlying groups. For public keys, we assume the same
+serialization format is used throughout (we expect that this will be
+the compressed point format in most applications). Whenever we need to
+serialize a public key in the context of messag augmentation and PoP,
+we will use the same serialization.
 
 
-## Minor
-
-* Move the text for the "try-and-increment approach" for hashing onto
-curves to the Appendix.  We will also refer to this approach as
-"hash-and-test" to avoid incorrect implementations that simply
-increment the x-coordinate by 1.
 
