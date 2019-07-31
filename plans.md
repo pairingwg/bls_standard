@@ -35,5 +35,8 @@ the compressed point format in most applications). Whenever we need to
 serialize a public key in the context of messag augmentation and PoP,
 we will use the same serialization.
 
+* We will use HKDF for key generation.
 
+* Unlike the [EdDSA](https://tools.ietf.org/html/rfc8032) spec, there will
+not be a separate pre-hash or contextualized mode.
 
