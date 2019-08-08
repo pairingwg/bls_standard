@@ -2,6 +2,12 @@
 
 The repo is maintained by a working group aiming to standardize BLS signature scheme.
 
+# MOVED
+
+**NOTE** work is continuing on a new repo, https://github.com/cfrg/draft-irtf-cfrg-bls-signature
+
+We'll leave this repo here, but freeze it. Please update your links!
+
 
 ## Useful links:
 * [Pairing draft](https://github.com/pairingwg/pfc_standard)
